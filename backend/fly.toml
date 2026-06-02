@@ -1,0 +1,41 @@
+# fly.toml — backend deployment config for Fly.io
+# Run `fly launch --copy-config --no-deploy` from this directory the first time
+# to register the app and skip the auto-generated config.
+
+app = "thurakkal-portfolio-backend"
+primary_region = "fra"            # Frankfurt — closest to Ulm and to Neon EU regions
+
+[build]
+
+[env]
+  PORT = "8080"
+  ALLOWED_ORIGINS = "https://thurakkal.com,https://www.thurakkal.com"
+  CONTACT_FROM = "no-reply@thurakkal.com"
+  CONTACT_TO = "nabeel.thurakkal92@gmail.com"
+  CONTACT_RATE_LIMIT_PER_HOUR = "5"
+  RUN_MIGRATIONS = "true"
+  SEED_ON_START = "true"          # seed is idempotent; flip to "false" once content is final
+
+# Secrets (set with: fly secrets set KEY=value)
+#   DATABASE_URL    — Neon Postgres connection string (use the pooled URL)
+#   RESEND_API_KEY  — Resend API key
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  min_machines_running = 0
+  processes = ["app"]
+
+  [[http_service.checks]]
+    grace_period = "10s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/healthz"
+
+[[vm]]
+  memory = "256mb"
+  cpu_kind = "shared"
+  cpus = 1

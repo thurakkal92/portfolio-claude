@@ -107,11 +107,86 @@ You do **not** need MX records unless you also want to receive mail at that doma
 - Skip-to-content link, focus rings, semantic landmarks, `aria-invalid` / `aria-describedby` on form fields, focus moves to the first error.
 - `prefers-reduced-motion` disables the grayscale → color hover transition on project cards.
 
-## Deployment outline
+## Deployment — Vercel + Fly.io + Neon
 
-- **Frontend** → Vercel (or any Node host). Set `API_BASE_URL` to the deployed Go service and `NEXT_PUBLIC_SITE_URL` to the public domain. Build pulls content at build time.
-- **Backend** → any host that can reach Postgres. Provide `DATABASE_URL`, `RESEND_API_KEY`, `CONTACT_FROM`, `CONTACT_TO`, `ALLOWED_ORIGINS=https://thurakkal.com`. Set `SEED_ON_START=false` and `RUN_MIGRATIONS` per your rollout strategy.
-- **Postgres** → Neon / Supabase / RDS. After first deploy, run migrations once then turn `RUN_MIGRATIONS` off if you prefer manual control.
+Free tier across the stack, ~10 minutes end-to-end. **Run in this order** — the Vercel build fetches content from the live backend, so the backend has to be up first.
+
+### 1. Database — Neon
+
+1. Create a project at <https://neon.tech> (free tier, EU region for low latency from Fly Frankfurt).
+2. Copy the **pooled** connection string (`...pooler.neon.tech...`) — looks like `postgres://user:pass@ep-xxx-pooler.eu-central-1.aws.neon.tech/neondb?sslmode=require`.
+
+### 2. Backend — Fly.io
+
+Install once: `brew install flyctl && fly auth signup`.
+
+```sh
+cd backend
+fly launch --copy-config --no-deploy        # registers the app using ./fly.toml
+fly secrets set \
+  DATABASE_URL="postgres://...pooler.neon.tech/...?sslmode=require" \
+  RESEND_API_KEY="re_xxx"                   # leave blank for now if you haven't verified yet
+fly deploy
+```
+
+The first deploy runs embedded migrations and seeds EN+DE content. Verify:
+```sh
+curl https://thurakkal-portfolio-backend.fly.dev/healthz   # → 204
+curl https://thurakkal-portfolio-backend.fly.dev/api/content?locale=en | head -c 200
+```
+
+Subsequent backend changes deploy automatically via `.github/workflows/deploy-backend.yml` — just push to `main`. Set `FLY_API_TOKEN` once in **GitHub repo → Settings → Secrets and variables → Actions**: get the token with `fly tokens create deploy -x 999999h`.
+
+### 3. Frontend — Vercel
+
+In the Vercel dashboard:
+1. **New Project** → import `thurakkal92/portfolio-claude`.
+2. **Root Directory** = `frontend` (the `frontend/vercel.json` already pins the install command to use the workspace lockfile at repo root).
+3. **Environment Variables**:
+   - `API_BASE_URL` = `https://thurakkal-portfolio-backend.fly.dev`
+   - `NEXT_PUBLIC_SITE_URL` = `https://thurakkal.com`
+4. Deploy.
+
+After it succeeds: **Project → Settings → Domains → Add** `thurakkal.com` and `www.thurakkal.com`. Vercel shows the exact DNS records to set.
+
+### 4. DNS — Namecheap (`thurakkal.com`)
+
+In **Namecheap → Advanced DNS**, replace the default records with:
+
+| Type | Host | Value | TTL |
+|---|---|---|---|
+| A | `@` | `76.76.21.21` | Automatic |
+| CNAME | `www` | `cname.vercel-dns.com.` | Automatic |
+| CNAME | `api` | `thurakkal-portfolio-backend.fly.dev.` | Automatic |
+
+Plus the Resend records once you add `thurakkal.com` in the Resend dashboard:
+
+| Type | Host | Value |
+|---|---|---|
+| TXT  | `send` | `v=spf1 include:_spf.resend.com ~all` |
+| TXT  | `resend._domainkey` | *(DKIM value Resend gives you)* |
+| TXT  | `_dmarc` | `v=DMARC1; p=none; rua=mailto:dmarc@thurakkal.com` |
+
+Propagation: usually 5–15 minutes on Namecheap.
+
+### 5. Optional — custom backend hostname
+
+If you want the backend at `https://api.thurakkal.com` instead of the `.fly.dev` URL:
+```sh
+cd backend
+fly certs add api.thurakkal.com
+```
+Then update `API_BASE_URL` in Vercel and `ALLOWED_ORIGINS` in `fly.toml` accordingly, and redeploy.
+
+### Cost summary
+
+| Service | Plan | What's included | Cost |
+|---|---|---|---|
+| Vercel | Hobby | 100 GB-hours, automatic deploys, custom domain | $0 |
+| Fly.io | Free | 3× shared-cpu-1x 256 MB VMs, 160 GB egress | $0 |
+| Neon | Free | 0.5 GB storage, autoscale to zero, branching | $0 |
+| Resend | Free | 3,000 emails/mo, 100/day | $0 |
+| **Total** | | | **$0/mo** |
 
 ## Layout
 

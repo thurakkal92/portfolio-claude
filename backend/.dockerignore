@@ -1,0 +1,11 @@
+.env
+.env.*
+*.local
+bin/
+server
+seed
+.DS_Store
+.idea/
+.vscode/
+README.md
+fly.toml
