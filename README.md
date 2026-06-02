@@ -20,55 +20,69 @@ Multilingual (EN / DE), statically generated, content-driven from a Go + Postgre
 
 > Note: the original brief specified `sqlc + golang-migrate CLI`. We use pgx directly with hand-written SQL and import golang-migrate as a Go library so no extra CLIs are required for setup. Same architecture, less ceremony.
 
-## Quick start
+## Run locally — Docker only
 
-Prereqs: Go 1.25+, Node 20+, Postgres 15+ running locally (or Docker).
-
-### 1. Postgres
-
-Local Postgres:
-```sh
-createuser portfolio --pwprompt   # password: portfolio
-createdb portfolio --owner=portfolio
-```
-
-Or via Docker:
-```sh
-docker compose up -d postgres
-```
-(Compose maps the container to host `:5433` so it won't collide with a local Postgres on `:5432`. Update `DATABASE_URL` accordingly.)
-
-### 2. Env files
+**The only prerequisite is Docker Desktop.** No local Go, Node, or Postgres needed.
 
 ```sh
-cp backend/.env.example backend/.env       # backend reads this via godotenv on startup
-cp frontend/.env.example frontend/.env.local
+docker compose up
 ```
 
-### 3. Install + run both apps with one command
+That's it. Three services come up:
+
+| Service | Image source | Host port | What it does |
+|---|---|---|---|
+| `postgres` | `postgres:16-alpine` | `5433` | Database (mapped to host `:5433` to avoid colliding with a local Postgres on `:5432`) |
+| `backend`  | `./backend/Dockerfile` | `8080` | Go API. Runs embedded migrations + seeds EN+DE content on first boot |
+| `frontend` | `./frontend/Dockerfile` | `3000` | Next.js `next dev` with hot reload — `frontend/` is bind-mounted into the container |
+
+Open <http://localhost:3000> — the middleware redirects to `/en`. The German UI is at `/de` (or via the nav language switcher).
+
+Endpoints exposed:
+
+- Frontend: <http://localhost:3000>
+- Backend `/healthz`, `/api/content?locale={en|de}`, `/api/contact`: <http://localhost:8080>
+- Postgres on the host: `psql -h localhost -p 5433 -U portfolio -d portfolio` (password `portfolio`)
+
+### Common commands
+
+| Goal | Command |
+|---|---|
+| First start (build + run) | `docker compose up` |
+| Run in background | `docker compose up -d` |
+| Stop | `docker compose down` |
+| Wipe Postgres data too | `docker compose down -v` |
+| Rebuild after backend code change | `docker compose up --build backend` |
+| Rebuild after backend deps change | `docker compose build --no-cache backend` |
+| Stream logs for one service | `docker compose logs -f frontend` |
+| Re-seed content without restart | `docker compose exec backend /app/seed` *(after `docker compose build backend` if you edited `seed.go`)* |
+| Shell into a container | `docker compose exec backend sh` |
+
+### How hot reload works
+
+- **Frontend**: source is bind-mounted, `next dev` watches files with polling (`WATCHPACK_POLLING=true` for reliable detection inside Docker on macOS). Edit `frontend/components/...` → browser reloads in ~1 s. `node_modules` and `.next` live inside the container, so npm changes don't fight Docker.
+- **Backend**: the existing Dockerfile compiles a Go binary, so backend code changes need `docker compose up --build backend`. Acceptable for a portfolio; for tighter iteration use `cd backend && go run ./cmd/server` natively (you'd need Go installed in that case).
+
+### Passing the Resend API key
+
+`backend/.env` is **not** read inside the container. Set it via the host environment when starting compose:
 
 ```sh
-npm install     # installs frontend (workspace) + the root dev tooling
-npm run dev     # starts backend (go run) AND frontend (next dev) concurrently
+RESEND_API_KEY="re_xxx" docker compose up
 ```
 
-Open <http://localhost:3000>. The middleware redirects `/` → `/en`.
+Or, for persistent local config, create a `.env` next to `docker-compose.yml`:
 
-Other root scripts:
-| Script | What it does |
-|--------|--------------|
-| `npm run dev` | Starts both apps with prefixed, colour-coded logs |
-| `npm run dev:backend` | Only the Go server |
-| `npm run dev:frontend` | Only the Next dev server |
-| `npm run build` | Production build of the frontend (after fetching content from the backend) |
-| `npm run start` | Production serve of both apps |
-| `npm run seed` | Re-runs the EN+DE seed against Postgres |
-| `npm run typecheck` | TypeScript check on the frontend |
+```sh
+echo 'RESEND_API_KEY=re_xxx' >> .env       # picked up by `docker compose` automatically
+docker compose up
+```
 
-The backend auto-loads `backend/.env`, runs embedded migrations, and re-seeds content on every start (set `SEED_ON_START=false` once content is final). It listens on `:8080`.
+Without a key, the contact form still validates and stores submissions to `contact_submissions`, but no email is sent (you'll see a warning in the backend logs).
 
-Backend endpoints:
-- `GET  /api/content?locale={en|de}` — full content payload (used by Next at build time)
+### Backend endpoints
+
+- `GET  /api/content?locale={en|de}` — full content payload (called by Next when pages render)
 - `POST /api/contact` — contact form (Resend, rate-limited, honeypot)
 - `GET  /healthz` — liveness
 
@@ -141,7 +155,7 @@ Subsequent backend changes deploy automatically via `.github/workflows/deploy-ba
 
 In the Vercel dashboard:
 1. **New Project** → import `thurakkal92/portfolio-claude`.
-2. **Root Directory** = `frontend` (the `frontend/vercel.json` already pins the install command to use the workspace lockfile at repo root).
+2. **Root Directory** = `frontend`. Vercel auto-detects Next.js and runs `npm install` + `next build` from there.
 3. **Environment Variables**:
    - `API_BASE_URL` = `https://thurakkal-portfolio-backend.fly.dev`
    - `NEXT_PUBLIC_SITE_URL` = `https://thurakkal.com`
@@ -205,8 +219,7 @@ frontend/
   lib/{api,types,seo,utils}.ts
   messages/{en,de}.json
   public/{cv,images/projects,og}
-package.json                  # root: npm workspaces + concurrently
-docker-compose.yml
+docker-compose.yml            # `docker compose up` runs all three services
 ```
 
 ## Replace before launch

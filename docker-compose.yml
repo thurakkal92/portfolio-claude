@@ -1,3 +1,7 @@
+# One command for local dev: `docker compose up`
+# Brings up Postgres, the Go backend, and the Next.js frontend with hot reload.
+# No local installs of Go, Node, or Postgres required.
+
 services:
   postgres:
     image: postgres:16-alpine
@@ -8,7 +12,7 @@ services:
       POSTGRES_PASSWORD: portfolio
       POSTGRES_DB: portfolio
     ports:
-      - "5433:5432"
+      - "5433:5432"            # host:container — connect from your Mac with psql -p 5433
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
@@ -18,10 +22,7 @@ services:
       retries: 10
 
   backend:
-    profiles: ["full"]
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    build: ./backend
     container_name: portfolio_backend
     restart: unless-stopped
     depends_on:
@@ -34,8 +35,34 @@ services:
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       CONTACT_FROM: ${CONTACT_FROM:-no-reply@thurakkal.com}
       CONTACT_TO: ${CONTACT_TO:-nabeel.thurakkal92@gmail.com}
+      CONTACT_RATE_LIMIT_PER_HOUR: "5"
+      RUN_MIGRATIONS: "true"
+      SEED_ON_START: "true"
     ports:
       - "8080:8080"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/healthz"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  frontend:
+    build: ./frontend
+    container_name: portfolio_frontend
+    restart: unless-stopped
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      API_BASE_URL: http://backend:8080
+      NEXT_PUBLIC_SITE_URL: ${NEXT_PUBLIC_SITE_URL:-http://localhost:3000}
+      WATCHPACK_POLLING: "true"       # Reliable file watching across Docker on macOS/Windows
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./frontend:/app             # bind-mount source for hot reload
+      - /app/node_modules           # keep image node_modules
+      - /app/.next                  # keep image build cache
 
 volumes:
   postgres-data:
