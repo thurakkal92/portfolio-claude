@@ -1,0 +1,41 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: portfolio_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: portfolio
+      POSTGRES_PASSWORD: portfolio
+      POSTGRES_DB: portfolio
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U portfolio -d portfolio"]
+      interval: 3s
+      timeout: 3s
+      retries: 10
+
+  backend:
+    profiles: ["full"]
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: portfolio_backend
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://portfolio:portfolio@postgres:5432/portfolio?sslmode=disable
+      PORT: "8080"
+      ALLOWED_ORIGINS: "http://localhost:3000"
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      CONTACT_FROM: ${CONTACT_FROM:-no-reply@thurakkal.com}
+      CONTACT_TO: ${CONTACT_TO:-nabeel.thurakkal92@gmail.com}
+    ports:
+      - "8080:8080"
+
+volumes:
+  postgres-data:

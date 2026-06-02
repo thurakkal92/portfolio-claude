@@ -1,0 +1,15 @@
+DROP TABLE IF EXISTS contact_rate_limit;
+DROP TABLE IF EXISTS contact_submissions;
+DROP TABLE IF EXISTS social_links;
+DROP TABLE IF EXISTS contact;
+DROP TABLE IF EXISTS experience_translations;
+DROP TABLE IF EXISTS experiences;
+DROP TABLE IF EXISTS project_translations;
+DROP TABLE IF EXISTS projects;
+DROP TABLE IF EXISTS skill_items;
+DROP TABLE IF EXISTS skill_group_translations;
+DROP TABLE IF EXISTS skill_groups;
+DROP TABLE IF EXISTS about;
+DROP TABLE IF EXISTS hero;
+DROP TABLE IF EXISTS site_settings;
+DROP TABLE IF EXISTS locales;

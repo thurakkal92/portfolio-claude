@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "about": "Über mich",
+    "projects": "Projekte",
+    "experience": "Erfahrung",
+    "contact": "Kontakt",
+    "toggleTheme": "Dunklen Modus umschalten",
+    "switchLanguage": "Sprache wechseln",
+    "skipToContent": "Zum Inhalt springen"
+  },
+  "form": {
+    "namePlaceholder": "Dein Name",
+    "emailPlaceholder": "du@example.com",
+    "messagePlaceholder": "Wie kann ich helfen?",
+    "sending": "Senden…",
+    "errors": {
+      "required": "Dieses Feld ist erforderlich",
+      "email": "Bitte gib eine gültige E-Mail-Adresse ein",
+      "minMessage": "Nachricht ist zu kurz (mind. 10 Zeichen)",
+      "network": "Der Server ist nicht erreichbar. Bitte erneut versuchen.",
+      "rateLimited": "Zu viele Anfragen. Bitte später erneut versuchen."
+    }
+  },
+  "projects": {
+    "liveDemo": "Live-Demo",
+    "source": "Quellcode"
+  },
+  "experience": {
+    "present": "Heute"
+  },
+  "footer": {
+    "tagline": "Präzisionsorientierte Frontend-Entwicklung mit Fokus auf Skalierbarkeit und hochwertige Ästhetik.",
+    "quickLinks": "Schnellzugriff",
+    "legal": "Rechtliches",
+    "impressum": "Impressum",
+    "datenschutz": "Datenschutz",
+    "copyright": "© {year} Nabeel Thurakkal. Mit Präzision gebaut."
+  },
+  "legal": {
+    "impressum": {
+      "title": "Impressum",
+      "intro": "Angaben gemäß § 5 TMG",
+      "comingSoon": "Vollständiges Impressum folgt vor dem Launch."
+    },
+    "datenschutz": {
+      "title": "Datenschutzerklärung",
+      "comingSoon": "Vollständige Datenschutzerklärung folgt vor dem Launch."
+    }
+  }
+}

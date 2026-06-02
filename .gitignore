@@ -1,0 +1,29 @@
+# Env
+.env
+.env.local
+.env.*.local
+
+# Node
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+next-env.d.ts
+
+# Go
+/backend/bin/
+/backend/server
+/backend/seed
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Docker
+postgres-data/
+
+# Build artifacts
+dist/
+coverage/

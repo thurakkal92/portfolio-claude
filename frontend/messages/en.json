@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "about": "About",
+    "projects": "Projects",
+    "experience": "Experience",
+    "contact": "Contact",
+    "toggleTheme": "Toggle dark mode",
+    "switchLanguage": "Switch language",
+    "skipToContent": "Skip to content"
+  },
+  "form": {
+    "namePlaceholder": "Your name",
+    "emailPlaceholder": "you@example.com",
+    "messagePlaceholder": "How can I help?",
+    "sending": "Sending…",
+    "errors": {
+      "required": "This field is required",
+      "email": "Please enter a valid email",
+      "minMessage": "Message is too short (min 10 characters)",
+      "network": "Couldn't reach the server. Please try again.",
+      "rateLimited": "Too many submissions. Please try again later."
+    }
+  },
+  "projects": {
+    "liveDemo": "Live Demo",
+    "source": "Source"
+  },
+  "experience": {
+    "present": "Present"
+  },
+  "footer": {
+    "tagline": "Precision-driven frontend engineering focused on scalability and high-end aesthetics.",
+    "quickLinks": "Quick Links",
+    "legal": "Legal",
+    "impressum": "Impressum",
+    "datenschutz": "Privacy Policy",
+    "copyright": "© {year} Nabeel Thurakkal. Built for precision."
+  },
+  "legal": {
+    "impressum": {
+      "title": "Impressum",
+      "intro": "Angaben gemäß § 5 TMG",
+      "comingSoon": "Full Impressum content will be added before launch."
+    },
+    "datenschutz": {
+      "title": "Privacy Policy",
+      "comingSoon": "Full privacy policy will be added before launch."
+    }
+  }
+}
