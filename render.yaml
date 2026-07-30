@@ -1,0 +1,34 @@
+# Render Blueprint — deploys the Go backend as a Docker web service.
+# Free plan: sleeps after 15 min idle, ~30–50 s cold-start on wake.
+# Custom domains cost $7/mo on Starter — for now use the .onrender.com URL.
+
+services:
+  - type: web
+    name: portfolio-backend
+    runtime: docker
+    plan: free
+    region: frankfurt          # closest to Ulm; matches Neon EU-central-1
+    rootDir: backend
+    dockerfilePath: Dockerfile
+    healthCheckPath: /healthz
+    autoDeploy: true           # redeploy on push to main
+    envVars:
+      - key: PORT
+        value: "8080"
+      - key: ALLOWED_ORIGINS
+        value: "https://thurakkal.com,https://www.thurakkal.com"
+      - key: CONTACT_FROM
+        value: "no-reply@thurakkal.com"
+      - key: CONTACT_TO
+        value: "nabeel.thurakkal92@gmail.com"
+      - key: CONTACT_RATE_LIMIT_PER_HOUR
+        value: "5"
+      - key: RUN_MIGRATIONS
+        value: "true"
+      - key: SEED_ON_START
+        value: "true"          # flip to "false" once content is final to speed up cold starts
+      # Secrets — set manually in Render dashboard, NOT in this file:
+      - key: DATABASE_URL
+        sync: false            # Neon pooled connection string
+      - key: RESEND_API_KEY
+        sync: false            # Resend API key

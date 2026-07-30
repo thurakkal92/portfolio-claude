@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 675" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#1b1b1b"/>
+      <stop offset="1" stop-color="#3a3a3a"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="675" fill="url(#g)"/>
+  <g fill="#fafafa" font-family="Geist, Inter, system-ui, sans-serif">
+    <text x="80" y="120" font-size="18" letter-spacing="3" fill="#bdbdbd">CLEARTRIP · FRONTEND REVAMP</text>
+    <text x="80" y="300" font-size="96" font-weight="700">Flights · Hotels</text>
+    <text x="80" y="400" font-size="96" font-weight="700">Mobile PWA</text>
+    <text x="80" y="460" font-size="32" fill="#cfcfcf">React · styled-components · PWA</text>
+  </g>
+  <g stroke="#ffffff22" stroke-width="1">
+    <line x1="0" y1="530" x2="1200" y2="530"/>
+    <line x1="0" y1="580" x2="1200" y2="580"/>
+    <line x1="0" y1="630" x2="1200" y2="630"/>
+  </g>
+</svg>

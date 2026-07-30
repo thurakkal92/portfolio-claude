@@ -6,7 +6,9 @@
     "contact": "Kontakt",
     "toggleTheme": "Dunklen Modus umschalten",
     "switchLanguage": "Sprache wechseln",
-    "skipToContent": "Zum Inhalt springen"
+    "skipToContent": "Zum Inhalt springen",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
   },
   "form": {
     "namePlaceholder": "Dein Name",
@@ -23,7 +25,8 @@
   },
   "projects": {
     "liveDemo": "Live-Demo",
-    "source": "Quellcode"
+    "source": "Quellcode",
+    "viewCaseStudy": "Fallstudie ansehen"
   },
   "experience": {
     "present": "Heute"

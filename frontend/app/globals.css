@@ -63,4 +63,11 @@
   .label-mono-md {
     @apply font-mono text-[13px] uppercase tracking-[0.08em];
   }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
 }

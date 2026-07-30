@@ -6,7 +6,9 @@
     "contact": "Contact",
     "toggleTheme": "Toggle dark mode",
     "switchLanguage": "Switch language",
-    "skipToContent": "Skip to content"
+    "skipToContent": "Skip to content",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "form": {
     "namePlaceholder": "Your name",
@@ -23,7 +25,8 @@
   },
   "projects": {
     "liveDemo": "Live Demo",
-    "source": "Source"
+    "source": "Source",
+    "viewCaseStudy": "View case study"
   },
   "experience": {
     "present": "Present"

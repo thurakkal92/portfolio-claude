@@ -5,7 +5,7 @@ export function AboutSection({ about }: { about: About }) {
   return (
     <section
       id="about"
-      className="py-24 border-t border-border scroll-mt-20"
+      className="py-16 md:py-24 border-t border-border scroll-mt-20"
       aria-labelledby="about-title"
     >
       <div className="grid grid-cols-1 md:grid-cols-12 gap-12">
@@ -19,7 +19,7 @@ export function AboutSection({ about }: { about: About }) {
             ))}
           </div>
         </div>
-        <div className="md:col-span-5">
+        <div className="hidden md:block md:col-span-5">
           <div className="border border-border bg-card p-6 space-y-4">
             <h3 className="label-mono">Quick Facts</h3>
             <ul className="space-y-3">
@@ -51,6 +51,32 @@ export function AboutSection({ about }: { about: About }) {
             </ul>
           </div>
         </div>
+      </div>
+      {/* Mobile: horizontal-scroll facts strip, breaks out of container padding */}
+      <div className="md:hidden -mx-4 mt-8 overflow-x-auto no-scrollbar">
+        <ul className="flex gap-3 px-4 min-w-max" role="list">
+          {about.quickFacts.map((fact, i) => (
+            <li
+              key={i}
+              className="border border-border bg-card p-4 min-w-[160px] flex flex-col gap-1"
+            >
+              <span className="font-mono text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
+                {fact.label}
+              </span>
+              {fact.kind === "status" ? (
+                <span className="inline-flex items-center gap-2 text-sm font-semibold">
+                  <span
+                    className="h-2 w-2 rounded-full bg-emerald-500"
+                    aria-hidden
+                  />
+                  {fact.value}
+                </span>
+              ) : (
+                <span className="text-sm font-semibold">{fact.value}</span>
+              )}
+            </li>
+          ))}
+        </ul>
       </div>
     </section>
   );

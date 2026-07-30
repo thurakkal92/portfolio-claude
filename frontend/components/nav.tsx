@@ -1,6 +1,7 @@
 import { getTranslations } from "next-intl/server";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
+import { MobileMenu } from "./mobile-menu";
 
 export async function Nav({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "nav" });
@@ -35,6 +36,7 @@ export async function Nav({ locale }: { locale: string }) {
         <div className="flex items-center gap-2">
           <LanguageSwitcher currentLocale={locale} />
           <ThemeToggle />
+          <MobileMenu links={links} />
         </div>
       </div>
     </header>
