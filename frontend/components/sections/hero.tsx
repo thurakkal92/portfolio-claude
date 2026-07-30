@@ -1,7 +1,13 @@
 import { Button } from "@/components/ui/button";
 import type { Hero, SiteSettings } from "@/lib/types";
 
-export function HeroSection({ hero, site }: { hero: Hero; site: SiteSettings }) {
+export function HeroSection({
+  hero,
+  site,
+}: {
+  hero: Hero;
+  site: SiteSettings;
+}) {
   return (
     <section
       className="relative py-16 md:py-32 overflow-hidden"
@@ -12,13 +18,13 @@ export function HeroSection({ hero, site }: { hero: Hero; site: SiteSettings }) 
         className="absolute top-0 right-0 -z-10 w-1/2 h-full opacity-10 bg-[radial-gradient(circle_at_center,hsl(var(--foreground))_0%,transparent_60%)]"
       />
       <div className="space-y-6 animate-fade-up">
-        <p className="label-mono-md text-muted-foreground">{hero.eyebrow}</p>
-        <h1
+        <h1 className="label-mono-md text-muted-foreground">{hero.eyebrow}</h1>
+        <h2
           id="hero-title"
           className="font-display text-[44px] md:text-6xl font-bold tracking-tightest leading-[1.05] max-w-3xl"
         >
           {hero.name}
-        </h1>
+        </h2>
         <p className="text-base md:text-lg text-muted-foreground max-w-xl leading-relaxed">
           {hero.subtitle}
         </p>
