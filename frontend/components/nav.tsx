@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { Pi } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { LanguageSwitcher } from "./language-switcher";
 import { MobileMenu } from "./mobile-menu";
@@ -17,10 +18,10 @@ export async function Nav({ locale }: { locale: string }) {
       <div className="container mx-auto flex h-16 items-center justify-between">
         <a
           href={`/${locale}`}
-          className="font-display text-xl font-bold tracking-tightest"
+          className="inline-flex items-center text-foreground"
           aria-label="Nabeel Thurakkal — Home"
         >
-          NT
+          <Pi className="h-6 w-6" strokeWidth={2.25} aria-hidden />
         </a>
         <nav className="hidden md:flex items-center gap-8" aria-label="Primary">
           {links.map((l) => (

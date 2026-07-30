@@ -1,4 +1,5 @@
 import { getTranslations } from "next-intl/server";
+import { Pi } from "lucide-react";
 
 export async function Footer({ locale }: { locale: string }) {
   const t = await getTranslations({ locale, namespace: "footer" });
@@ -8,7 +9,9 @@ export async function Footer({ locale }: { locale: string }) {
     <footer className="border-t border-border bg-background mt-24">
       <div className="container mx-auto py-16 grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="space-y-4">
-          <div className="font-display text-xl font-bold tracking-tightest">NT</div>
+          <div className="text-foreground" aria-label="Nabeel Thurakkal">
+            <Pi className="h-6 w-6" strokeWidth={2.25} aria-hidden />
+          </div>
           <p className="text-sm text-muted-foreground max-w-xs">{t("tagline")}</p>
         </div>
         <div className="flex flex-col gap-2">
